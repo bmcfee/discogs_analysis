@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
+import cPickle as pickle
 import sys
-import shelve
 import couchdb
 
 import nltk
@@ -68,11 +68,11 @@ def profile_filter(doc):
         yield None, doc
 
 
-def extract_keywords(url, max_artists, data):
+def extract_keywords(url, max_artists, data_file):
     server = couchdb.client.Server(url=url)
     db = server['discogs_artist']
 
-    data = shelve.open(data)
+    data = {}
 
     for i, doc in enumerate(db.view('has_profile/has_profile')):
         if max_artists > 0 and i > max_artists:
@@ -86,6 +86,8 @@ def extract_keywords(url, max_artists, data):
         print doc.value['profile']
         print '---\n'
 
+    with open(data_file, 'w') as f:
+        pickle.dump(f, data)
 
 def process_arguments(args):
 
