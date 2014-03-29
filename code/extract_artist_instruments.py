@@ -87,7 +87,7 @@ def extract_keywords(url, max_artists, data_file):
         print '---\n'
 
     with open(data_file, 'w') as f:
-        pickle.dump(f, data)
+        pickle.dump(data, f, protocol=-1)
 
 def process_arguments(args):
 
