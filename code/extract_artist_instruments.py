@@ -78,7 +78,7 @@ def extract_keywords(url, max_artists, data):
         if max_artists > 0 and i > max_artists:
             break
         
-        data['id'] = {'name': doc.value['name'], 'terms': analyze_text(doc.value['profile'])}
+        data[doc.value['id']] = {'name': doc.value['name'], 'terms': analyze_text(doc.value['profile'])}
         print doc.value['id'], doc.value['_id']
         print doc.value['name']
         print '\t', analyze_text(doc.value['profile'])
