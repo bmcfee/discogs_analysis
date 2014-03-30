@@ -1,0 +1,19 @@
+{
+  "saxophon": "saxophone",
+  "trombon": "trombone",
+  "drum": "drum",
+  "bass": "bass",
+  "voc": "vocals",
+  "guit": "guitar",
+  "harmonic": "harmonica",
+  "tambourin": "tambourine",
+  "horn": "horn",
+  "synthes": "synthesiser",
+  "instru": null,
+  "violin": "violin",
+  "fiddl": "fiddle",
+  "org": "organ",
+  "piano": "piano",
+  "trumpet": "trumpet",
+  "string": "strings"
+}
