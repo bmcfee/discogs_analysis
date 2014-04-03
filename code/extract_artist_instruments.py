@@ -81,7 +81,7 @@ def extract_keywords(url, max_artists, data_file):
 
         terms = analyze_text(doc['profile'], sd=sd)
 
-        data[doc.value['id']] = {'name': doc['name'], 'terms': terms}
+        data[doc['id']] = {'name': doc['name'], 'terms': terms}
 
 
     with open(data_file, 'w') as f:
