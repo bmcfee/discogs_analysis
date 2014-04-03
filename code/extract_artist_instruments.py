@@ -82,6 +82,9 @@ def analyze_discogs(url, max_artists, data_file):
     for doc in db.view('_all_docs', **params):
         doc = doc['doc']
 
+        if 'name' not in doc:
+            continue
+
         if len(id_to_name) % 1000 == 0:
             print len(id_to_name)
 
