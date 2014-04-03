@@ -62,12 +62,17 @@ def analyze_text(query, sd=None):
             
     return tags
 
-def extract_keywords(url, max_artists, data_file):
+def analyze_discogs(url, max_artists, data_file):
     server = couchdb.client.Server(url=url)
 
     db = server['discogs_artist']
 
-    data = {}
+    id_to_terms     = {}
+    id_to_name      = {}
+    name_to_id      = {}
+    groups          = {}
+    members         = {}
+
 
     sd = nltk.data.load('tokenizers/punkt/english.pickle')
 
@@ -76,16 +81,62 @@ def extract_keywords(url, max_artists, data_file):
 
     for doc in db.view('_all_docs', limit=max_artists, stale='ok', include_docs=True):
         doc = doc['doc']
-        if len(data) % 1000 == 0:
-            print len(data)
 
+        if len(id_to_name) % 1000 == 0:
+            print len(id_to_name)
+
+        # Connect id<=>name
+        id_to_name[doc['id']]   = doc['name']
+        name_to_id[doc['name']] = doc['id']
+        
+        # Analyze profile text for instrument terms
         terms = analyze_text(doc['profile'], sd=sd)
 
-        data[doc['id']] = {'name': doc['name'], 'terms': terms}
+        id_to_terms[doc['id']]  = terms
 
+        # Analyze the membership graph
+        groups[doc['id']]       = doc['groups']
+        members[doc['id']]      = doc['members']
+
+
+    # Convert memberships from name-oriented to id-oriented
+    artist_to_group = {}
+    group_to_artist = {}
+
+    for artist_id, artist_groups in groups.iteritems():
+        if artist_id not in artist_to_group:
+            artist_to_group[artist_id] = set()
+
+        for x in artist_groups:
+            if x in name_to_id:
+                # If the group is in the id space, add it to the artist
+                artist_to_group[artist_id].add(name_to_id[x])
+
+                # And add the artist to the group
+                if x not in group_to_artist:
+                    group_to_artist[x] = set()
+                group_to_artist[x].add(artist_id)
+
+    for group_id, group_members in members.iteritems():
+        if group_id not in group_to_artist:
+            group_to_artist[group_id] = set()
+
+        for x in group_members:
+            if x in name_to_id:
+                group_to_artist[group_id].add(name_to_id[x])
+
+                if x not in artist_to_group:
+                    artist_to_group[x] = set()
+
+                artist_to_group[x].add(group_id)
 
     with open(data_file, 'w') as f:
-        pickle.dump(data, f, protocol=-1)
+        pickle.dump({'id_to_terms': id_to_terms, 
+                     'id_to_name': id_to_name, 
+                     'name_to_id': name_to_id,
+                     'artist_to_group': artist_to_group,
+                     'group_to_artist': group_to_artist}, 
+                     f, protocol=-1)
 
 def process_arguments(args):
 
@@ -117,5 +168,5 @@ def process_arguments(args):
 if __name__ == '__main__':
     args = process_arguments(sys.argv[1:])
 
-    extract_keywords(args['url'], args['num_artists'], args['data'])
+    analyze_discogs(args['url'], args['num_artists'], args['data'])
 
