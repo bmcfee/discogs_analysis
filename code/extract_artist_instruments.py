@@ -77,14 +77,16 @@ def extract_keywords(url, max_artists, data_file):
     for i, doc in enumerate(db.view('has_profile/has_profile')):
         if max_artists > 0 and i > max_artists:
             break
-        
+        if i % 1000 == 0:
+            print i
+
         data[doc.value['id']] = {'name': doc.value['name'], 'terms': analyze_text(doc.value['profile'])}
-        print doc.value['id'], doc.value['_id']
-        print doc.value['name']
-        print '\t', analyze_text(doc.value['profile'])
-        print
-        print doc.value['profile']
-        print '---\n'
+        #print doc.value['id'], doc.value['_id']
+        #print doc.value['name']
+        #print '\t', analyze_text(doc.value['profile'])
+        #print
+        #print doc.value['profile']
+        #print '---\n'
 
     with open(data_file, 'w') as f:
         pickle.dump(data, f, protocol=-1)
