@@ -46,47 +46,43 @@ def analyze_text(query, sd=None):
         tokens = nltk.tokenize.word_tokenize(q)
         return nltk.pos_tag(tokens)
     
-    if sd is None:
-        sd = nltk.data.load('tokenizers/punkt/english.pickle')
-    
+    tags = set()
+    if not len(query):
+        return tags
+
     # NLTK doesn't tokenize on / 
     query = query.replace('/', ' ')    
     results = []
     for l in sd.tokenize(query):
         results.extend(analyze_sentence(l))
     
-    tags = set()
     for w, p in results:
         if is_instrumental(w):#, pos=get_wordnet_pos(p)):
             tags.add(w.lower())
             
     return tags
 
-# Only yield documents with a non-empty profile
-def profile_filter(doc):
-    if doc['profile'].strip():
-        yield None, doc
-
-
 def extract_keywords(url, max_artists, data_file):
     server = couchdb.client.Server(url=url)
+
     db = server['discogs_artist']
 
     data = {}
 
-    for i, doc in enumerate(db.view('has_profile/has_profile')):
-        if max_artists > 0 and i > max_artists:
-            break
-        if i % 1000 == 0:
-            print i
+    sd = nltk.data.load('tokenizers/punkt/english.pickle')
 
-        data[doc.value['id']] = {'name': doc.value['name'], 'terms': analyze_text(doc.value['profile'])}
-        #print doc.value['id'], doc.value['_id']
-        #print doc.value['name']
-        #print '\t', analyze_text(doc.value['profile'])
-        #print
-        #print doc.value['profile']
-        #print '---\n'
+    if max_artists < 0:
+        max_artists = None
+
+    for doc in db.view('_all_docs', limit=max_artists, stale='ok', include_docs=True):
+        doc = doc['doc']
+        if len(data) % 1000 == 0:
+            print len(data)
+
+        terms = analyze_text(doc.value['profile'], sd=sd)
+
+        data[doc.value['id']] = {'name': doc.value['name'], 'terms': terms}
+
 
     with open(data_file, 'w') as f:
         pickle.dump(data, f, protocol=-1)
