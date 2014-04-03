@@ -79,9 +79,9 @@ def extract_keywords(url, max_artists, data_file):
         if len(data) % 1000 == 0:
             print len(data)
 
-        terms = analyze_text(doc.value['profile'], sd=sd)
+        terms = analyze_text(doc['profile'], sd=sd)
 
-        data[doc.value['id']] = {'name': doc.value['name'], 'terms': terms}
+        data[doc.value['id']] = {'name': doc['name'], 'terms': terms}
 
 
     with open(data_file, 'w') as f:
