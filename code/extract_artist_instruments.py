@@ -25,7 +25,6 @@ def is_instrumental(w, pos=None, key_tags=None):
             
     return False
 
-
 def get_wordnet_pos(treebank_tag):
 
     if treebank_tag.startswith('J'):
@@ -38,7 +37,6 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.ADV
     else:
         return None
-
 
 def analyze_text(query, sd=None):
     
@@ -76,10 +74,12 @@ def analyze_discogs(url, max_artists, data_file):
 
     sd = nltk.data.load('tokenizers/punkt/english.pickle')
 
-    if max_artists < 0:
-        max_artists = None
+    params = {'stale': 'ok', 'include_docs': True}
 
-    for doc in db.view('_all_docs', limit=max_artists, stale='ok', include_docs=True):
+    if max_artists > 0:
+        params['limit'] = max_artists
+    
+    for doc in db.view('_all_docs', **params):
         doc = doc['doc']
 
         if len(id_to_name) % 1000 == 0:
@@ -146,8 +146,8 @@ def process_arguments(args):
                         dest='num_artists',
                         type=int,
                         required=False,
-                        default=50,
-                        help='Maximum number of artists to process.  Use -1 to disable')
+                        default=-1,
+                        help='Maximum number of artists to process.')
 
     parser.add_argument('-u', '--url', 
                         dest='url', 
