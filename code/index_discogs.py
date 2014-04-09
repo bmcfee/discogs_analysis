@@ -16,8 +16,6 @@ import whoosh.fields
 
 from whoosh.support.charset import accent_map
 
-from pprint import pprint
-
 def duration_to_int(v):
 
     try:
@@ -98,9 +96,7 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
                     'title': unicode(title),
                     'artist_name': unicode(artist_name),
                     'duration': duration}
-            print t['duration']
 
-            pprint(wdoc)
             writer.add_document(**wdoc)
 
     writer.commit()
