@@ -82,6 +82,13 @@ num_results=None):
         q = whoosh.query.And([q, q_duration])
 
     results = [dict(item) for item in searcher.search(q, limit=num_results)]
+
+    if results or not q_duration:
+        return results
+
+    q = q_title
+    results = [dict(item) for item in searcher.search(q, limit=num_results)]
+
     return results
         
 
