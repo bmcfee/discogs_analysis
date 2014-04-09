@@ -76,7 +76,11 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
     writer = create_index_writer(index_dir)
 
-    for doc in db.view('_all_docs', **params):
+    for i, doc in enumerate(db.view('_all_docs', **params)):
+
+        if i % 1000 == 0:
+            print i
+
         doc = doc['doc']
 
         artist_name = doc['artist']
