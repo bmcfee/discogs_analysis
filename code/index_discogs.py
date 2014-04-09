@@ -23,11 +23,13 @@ def duration_to_int(v):
     try:
         tstr = time.strptime(v, '%H:%M:%S')
     except ValueError:
-        tstr = time.strptime(v, '%M:%S')
-    except ValueError:
-        tstr = time.strptime(v, '%S')
-    finally:
-        return 0
+        try:
+            tstr = time.strptime(v, '%M:%S')
+        except ValueError:
+            try:
+                tstr = time.strptime(v, '%S')
+            except ValueError:
+                return 0
 
     return int(tstr.tm_hour * 60 * 60 + tstr.tm_min * 60 + tstr.tm_sec)
 
@@ -91,12 +93,15 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
             title  = t['title']
             duration    = duration_to_int(t['duration'])
 
-            writer.add_document(artist_id=artist_id,
-                                release_id=release_id,
-                                title=unicode(title),
-                                artist_name=unicode(artist_name),
-                                duration=duration)
-        print
+            wdoc = {'artist_id': artist_id,
+                    'release_id': release_id,
+                    'title': unicode(title),
+                    'artist_name': unicode(artist_name),
+                    'duration': duration}
+            print t['duration']
+
+            pprint(wdoc)
+            writer.add_document(**wdoc)
 
     writer.commit()
 
