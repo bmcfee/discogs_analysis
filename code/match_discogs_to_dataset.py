@@ -65,7 +65,7 @@ def make_results_list(res, artist_name):
     results = []
 
     for item in map(dict, results):
-        if edit_distance(artist_name, item['artist_name']) > 1 + min(len(artist_name), len(item['artist_name']) ) / 2:
+        if edit_distance(artist_name, item['artist_name']) > 1 + max(len(artist_name), len(item['artist_name']) ) / 2:
             continue
         results.append(item)
 
