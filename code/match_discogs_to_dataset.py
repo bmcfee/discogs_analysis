@@ -48,9 +48,6 @@ def scrub_string(x):
     # Kill parentheticals
     x = re.sub('\(.*?\)', '', x)
 
-    # Kill non-alphanumerics
-    x = re.sub('\W+', ' ', x)
-
     return x.strip()
 
 def load_input(json_file):
