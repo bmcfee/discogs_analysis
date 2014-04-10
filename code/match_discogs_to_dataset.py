@@ -26,7 +26,7 @@ def process_arguments(args):
     parser.add_argument('--tolerance', 
                         dest='tolerance', 
                         type=int, 
-                        default=4,
+                        default=2,
                         help='duration tolerance (seconds)')
 
     parser.add_argument(dest='json_file',
@@ -42,7 +42,13 @@ def process_arguments(args):
     return vars(parser.parse_args(args))
 
 def scrub_string(x):
-    return re.sub('\(.*?\)', '', x).strip()
+    # Kill parentheticals
+    x = re.sub('\(.*?\)', '', x)
+
+    # Kill non-alphanumerics
+    x = re.sub('\W+', ' ', x)
+
+    return x.strip()
 
 def load_input(json_file):
 
