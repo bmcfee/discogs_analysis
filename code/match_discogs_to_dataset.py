@@ -79,6 +79,13 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
     if results:
         return results[0]
 
+    # Fourth try: title and duration only
+    if tol:
+        q = whoosh.query.And([q_title, q_duration])
+        results = [dict(item) for item in searcher.search(q, limit=n)]
+        if results:
+            return results[0]
+
     return None
 
 def match_discogs(searcher, schema, data, output_file=None, tolerance=None, num_results=None):
@@ -94,8 +101,10 @@ def match_discogs(searcher, schema, data, output_file=None, tolerance=None, num_
 
         if m:
             row['artist_id'] = m['artist_id']
+            row['discogs_name'] = m['artist_name']
         else:
             row['artist_id'] = None
+            row['discogs_name'] = None
 
         pprint(row)
         print
