@@ -65,8 +65,9 @@ def make_results_list(res, artist_name):
     results = []
 
     for item in map(dict, results):
+        print artist_name, item
         if edit_distance(artist_name, item['artist_name']) > 1 + max(len(artist_name), len(item['artist_name']) ) / 2:
-            print 'Bad match: ', artist_name, item
+            print '\tBad match'
             continue
         results.append(item)
 
