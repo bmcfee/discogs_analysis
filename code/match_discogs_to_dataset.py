@@ -9,7 +9,10 @@ import whoosh.index
 import whoosh.qparser
 import re
 
+from Levenshtein import distance as edit_distance
+
 from pprint import pprint
+
 
 def process_arguments(args):
 
@@ -20,7 +23,7 @@ def process_arguments(args):
                         dest='num_results',
                         type=int,
                         required=False,
-                        default=1,
+                        default=100,
                         help='max # results to return')
 
     parser.add_argument('--tolerance', 
@@ -57,6 +60,17 @@ def load_input(json_file):
 
     return data
 
+def make_results_list(res, artist_name):
+
+    results = []
+
+    for item in map(dict, results):
+        if edit_distance(artist_name, item['artist_name']) > 1 + min(len(artist_name), len(item['artist_name']) ) / 2:
+            continue
+        results.append(item)
+
+    return results
+
 def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
 
     artist_parser = whoosh.qparser.SimpleParser('artist_name',  schema)
@@ -72,26 +86,26 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
         q_duration = dur_parser.parse('duration:{%d to %d}' % (duration - tol, duration + tol))
 
         q = whoosh.query.And([q_artist, q_title, q_duration])
-        results = [dict(item) for item in searcher.search(q, limit=n)]
+        results = make_results_list(searcher.search(q, limit=n), artist)
         if results:
             return results[0]
 
     # Second try: artist, title
     q = whoosh.query.And([q_artist, q_title])
-    results = [dict(item) for item in searcher.search(q, limit=n)]
+    results = make_results_list(searcher.search(q, limit=n), artist)
     if results:
         return results[0]
 
     # Third try: artist only
     q = q_artist
-    results = [dict(item) for item in searcher.search(q, limit=n)]
+    results = make_results_list(searcher.search(q, limit=n), artist)
     if results:
         return results[0]
 
     # Fourth try: title and duration only
     if tol:
         q = whoosh.query.And([q_title, q_duration])
-        results = [dict(item) for item in searcher.search(q, limit=n)]
+        results = make_results_list(searcher.search(q, limit=n), artist)
         if results:
             return results[0]
 
