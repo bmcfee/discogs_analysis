@@ -76,7 +76,8 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
     writer = create_index_writer(index_dir)
 
-    for i, doc in enumerate(db.view('_all_docs', **params)):
+    i = 0
+    for doc in db.view('_all_docs', **params):
 
         if i % 1000 == 0:
             print i
@@ -87,6 +88,8 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
         if artist_name not in name_to_id:
             continue
+
+        i = i + 1
 
         artist_id = name_to_id[artist_name]
         release_id = doc['id']
