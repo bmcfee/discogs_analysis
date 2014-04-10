@@ -42,7 +42,7 @@ def process_arguments(args):
     return vars(parser.parse_args(args))
 
 def scrub_string(x):
-    return re.replace('\(.*?\)', '', x).strip()
+    return re.sub('\(.*?\)', '', x).strip()
 
 def load_input(json_file):
 
