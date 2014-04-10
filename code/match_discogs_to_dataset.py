@@ -78,8 +78,8 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
     dur_parser    = whoosh.qparser.SimpleParser('duration',     schema)
     dur_parser.add_plugin(whoosh.qparser.RangePlugin)
     
-    q_artist = artist_parser.parse(scrub_string(artist))
-    q_title  = title_parser.parse(scrub_string(title))
+    q_artist = artist_parser.parse(artist)
+    q_title  = title_parser.parse(title)
 
     # First try: artist, title, duration
     if tol:
@@ -117,8 +117,8 @@ def match_discogs(searcher, schema, data, output_file=None, tolerance=None, num_
     for row in data:
         m = match_record(searcher, 
                         schema, 
-                        row['artist'], 
-                        row['title'],
+                        scrub_string(row['artist']), 
+                        scrub_string(row['title']),
                         row['duration'], 
                         tol=tolerance, n=num_results)
 
