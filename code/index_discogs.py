@@ -71,7 +71,7 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
     params = {'stale': 'ok', 'include_docs': True}
 
-    if n > 0:
+    if n:
         params['limit'] = n
 
     writer = create_index_writer(index_dir)
