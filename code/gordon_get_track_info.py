@@ -15,7 +15,7 @@ def get_track_info(collection_name=None, output_file=None):
         raise ValueError('Empty collection: %s' % collection_name)
 
     track_data = []
-    for t in collection.tracks:
+    for t in collection[0].tracks:
         track_data.append({'title': unicode(t.title), 'artist': unicode(t.artist), 'duration': int(t.secs)})
 
     with open(output_file, 'w') as f:
