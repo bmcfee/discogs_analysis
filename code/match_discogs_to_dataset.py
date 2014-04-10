@@ -7,6 +7,7 @@ import ujson as json
 import whoosh
 import whoosh.index
 import whoosh.qparser
+import re
 
 from pprint import pprint
 
@@ -40,6 +41,8 @@ def process_arguments(args):
 
     return vars(parser.parse_args(args))
 
+def scrub_string(x):
+    return re.replace('\(.*?\)', '', x).strip()
 
 def load_input(json_file):
 
@@ -55,8 +58,8 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
     dur_parser    = whoosh.qparser.SimpleParser('duration',     schema)
     dur_parser.add_plugin(whoosh.qparser.RangePlugin)
     
-    q_artist = artist_parser.parse(artist)
-    q_title  = title_parser.parse(title)
+    q_artist = artist_parser.parse(scrub_string(artist))
+    q_title  = title_parser.parse(scrub_string(title))
 
     # First try: artist, title, duration
     if tol:
