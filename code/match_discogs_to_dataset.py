@@ -100,11 +100,11 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
         return results[0]
 
     # Fourth try: title and duration only
-    if tol:
-        q = whoosh.query.And([q_title, q_duration])
-        results = make_results_list(searcher.search(q, limit=n), artist)
-        if results:
-            return results[0]
+#     if tol:
+#         q = whoosh.query.And([q_title, q_duration])
+#         results = make_results_list(searcher.search(q, limit=n), artist)
+#         if results:
+#             return results[0]
 
     return None
 
