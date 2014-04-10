@@ -76,12 +76,19 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
     writer = create_index_writer(index_dir)
 
-    for i, doc in enumerate(db.view('_all_docs', **params)):
+    for i, doc in enumerate(db.iterview('_all_docs', batch=1000, **params)):
 
         if i % 1000 == 0:
             print i
 
-        doc = doc['doc']
+        fail = False
+        try:
+            doc = doc['doc']
+        except:
+            fail = True
+
+        if fail:
+            continue
 
         artist_name = doc['artist']
 
