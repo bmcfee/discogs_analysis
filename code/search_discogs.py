@@ -51,8 +51,7 @@ def process_arguments(args):
 
     return vars(parser.parse_args(args))
 
-def probe(searcher, schema, artist=None, title=None, duration=None, tolerance=None,
-num_results=None):
+def probe(searcher, schema, artist=None, title=None, duration=None, tolerance=None, num_results=None):
 
 
     dur_parser      = whoosh.qparser.SimpleParser('duration', schema)
