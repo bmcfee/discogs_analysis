@@ -23,13 +23,13 @@ def process_arguments(args):
                         dest='num_results',
                         type=int,
                         required=False,
-                        default=100,
+                        default=10,
                         help='max # results to return')
 
     parser.add_argument('--tolerance', 
                         dest='tolerance', 
                         type=int, 
-                        default=2,
+                        default=5,
                         help='duration tolerance (seconds)')
 
     parser.add_argument(dest='json_file',
