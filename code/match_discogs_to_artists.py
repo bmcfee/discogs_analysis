@@ -71,10 +71,8 @@ def match_record(searcher, schema, artist, n=None):
     # Third try: artist only
     q = q_artist
     results = make_results_list(searcher.search(q, limit=n), artist)
-    if results:
-        return results[0]
+    return results
 
-    return None
 
 def match_discogs(searcher, schema, data, output_file=None, num_results=None):
 
@@ -85,12 +83,7 @@ def match_discogs(searcher, schema, data, output_file=None, num_results=None):
                         scrub_string(row['artist']), 
                         n=num_results)
 
-        if m:
-            row['artist_id'] = m['artist_id']
-            row['discogs_name'] = m['artist_name']
-        else:
-            row['artist_id'] = None
-            row['discogs_name'] = None
+        row['matches'] = m
 
         pprint(row)
         print
