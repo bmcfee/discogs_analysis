@@ -70,8 +70,12 @@ def make_results_list(res, artist_name):
 
 def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
 
-    artist_parser = whoosh.qparser.SimpleParser('artist_name',  schema)
-    title_parser  = whoosh.qparser.SimpleParser('title',        schema)
+    artist_parser = whoosh.qparser.QueryParser('artist_name',  schema)
+    artist_parser.remove_plugin_class(whoosh.qparser.plugins.PlusMinusPlugin)
+
+    title_parser  = whoosh.qparser.QueryParser('title',        schema)
+    title_parser.remove_plugin_class(whoosh.qparser.plugins.PlusMinusPlugin)
+    
     dur_parser    = whoosh.qparser.SimpleParser('duration',     schema)
     dur_parser.add_plugin(whoosh.qparser.RangePlugin)
     
@@ -83,28 +87,32 @@ def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
         q_duration = dur_parser.parse('duration:{%d to %d}' % (duration - tol, duration + tol))
 
         q = whoosh.query.And([q_artist, q_title, q_duration])
+        print q
         results = make_results_list(searcher.search(q, limit=n), artist)
         if results:
             return results[0]
 
     # Second try: artist, title
     q = whoosh.query.And([q_artist, q_title])
+    print q
     results = make_results_list(searcher.search(q, limit=n), artist)
     if results:
         return results[0]
 
     # Third try: artist only
-    q = q_artist
-    results = make_results_list(searcher.search(q, limit=n), artist)
-    if results:
-        return results[0]
+    #q = q_artist
+    #print q
+    #results = make_results_list(searcher.search(q, limit=n), artist)
+    #if results:
+    #    return results[0]
 
     # Fourth try: title and duration only
-#     if tol:
-#         q = whoosh.query.And([q_title, q_duration])
-#         results = make_results_list(searcher.search(q, limit=n), artist)
-#         if results:
-#             return results[0]
+    if tol:
+        q = whoosh.query.And([q_title, q_duration])
+        print q
+        results = make_results_list(searcher.search(q, limit=n), artist)
+        if results:
+            return results[0]
 
     return None
 

@@ -67,7 +67,7 @@ def index_discogs(couch_url, n, index_dir, discogs_mapping):
 
     server = couchdb.client.Server(url=couch_url)
 
-    db = server['discogs_release']
+    db = server['discogs_release_nv']
 
     params = {'stale': 'ok', 'include_docs': True}
 
