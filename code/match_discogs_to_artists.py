@@ -56,11 +56,15 @@ def make_results_list(res, artist_name):
     results = []
 
     for item in map(dict, res):
-        if edit_distance(artist_name, item['artist_name']) > 1 + max(len(artist_name), len(item['artist_name']) ) / 2:
-            continue
-        results.append(item)
+        ed = edit_distance(artist_name, item['artist_name'])
 
-    return results
+        if ed > 1 + max(len(artist_name), len(item['artist_name']) ) / 2:
+            continue
+        results.append( (ed, item))
+
+    results.sort()
+
+    return [r[-1] for r in results]
 
 def match_record(searcher, schema, artist, n=None):
 
