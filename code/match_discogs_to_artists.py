@@ -62,7 +62,7 @@ def make_results_list(res, artist_name):
 
     return results
 
-def match_record(searcher, schema, artist, title, duration, tol=None, n=None):
+def match_record(searcher, schema, artist, n=None):
 
     artist_parser = whoosh.qparser.SimpleParser('artist_name',  schema)
     
