@@ -26,12 +26,6 @@ def process_arguments(args):
                         default=10,
                         help='max # results to return')
 
-    parser.add_argument('--tolerance', 
-                        dest='tolerance', 
-                        type=int, 
-                        default=5,
-                        help='duration tolerance (seconds)')
-
     parser.add_argument(dest='json_file',
                         type=str,
                         help='Path to input json file ')
