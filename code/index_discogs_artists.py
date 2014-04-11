@@ -63,7 +63,7 @@ def index_discogs(index_dir, discogs_mapping):
     writer = create_index_writer(index_dir)
 
     for artist_name, artist_id in name_to_id.iteritems():
-            writer.add_document(artist_id=artist_id, artist_name=artist_name)
+            writer.add_document(artist_id=artist_id, artist_name=unicode(artist_name))
 
     writer.commit()
 
